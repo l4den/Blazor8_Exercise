@@ -1,0 +1,46 @@
+﻿@inject ExperiencesClient Client
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="modal fade" id="@GetModalId(Experience)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@title</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" 
+                class="btn btn-secondary" 
+                data-bs-dismiss="modal">Cancel</button>
+        <button type="button" 
+                class="btn btn-danger" 
+                data-bs-dismiss="modal"
+                @onclick="@ConfirmAsync">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public Experience? Experience {get; set;}
+
+    private string title = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        title = $"Delete {Experience?.CompanyName} {Experience?.Position}?";
+    }
+
+    public static string GetModalId(Experience? experience)
+    {
+        ArgumentNullException.ThrowIfNull(experience);
+        return $"delete/{experience.Id}";
+    }
+
+    private async Task ConfirmAsync()
+    {
+      await Client.DeleteExperieceAsync(Experience!.Id);
+      NavigationManager.Refresh();
+    }
+}

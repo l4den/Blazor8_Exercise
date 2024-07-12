@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\stefan\\Documents\\Blazor_Exercises\\CRUD.frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\CRUD.frontend.bundle.scp.css",
+      "PackagePath": "staticwebassets\\CRUD.frontend.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\stefan\\Documents\\Blazor_Exercises\\CRUD.frontend\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CRUD.frontend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CRUD.frontend.props",
+      "PackagePath": "build\\CRUD.frontend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CRUD.frontend.props",
+      "PackagePath": "buildMultiTargeting\\CRUD.frontend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CRUD.frontend.props",
+      "PackagePath": "buildTransitive\\CRUD.frontend.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

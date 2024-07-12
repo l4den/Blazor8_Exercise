@@ -1,0 +1,144 @@
+﻿@page "/edit-experience"
+@page "/edit-experience/{id:int}"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+@inject PeopleClient PeopleClient
+@inject ExperiencesClient ExperienceClient
+
+<PageTitle>@title</PageTitle>
+
+<h3 class="mt-3">@title</h3>
+<hr>
+
+@if ( experience is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <EditForm Model="@experience" FormName="editExperience" OnValidSubmit="HandleSubmitAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <p style="color: red; font-weight: 400">@errorMessage</p>
+                <div class="form-group">
+                    <label for="company">Company:</label>
+                    <InputText id="company" @bind-Value="experience.CompanyName" class="form-control" />
+                    <ValidationMessage For="() => experience.CompanyName"/>
+                </div>
+                <div class="form-group">
+                    <label for="position">Position:</label>
+                    <InputText id="position" @bind-Value="experience.Position" class="form-control" />
+                    <ValidationMessage For="() => experience.Position"/>
+                </div>
+                <div class="form-group">
+                    <label for="start-date">Start Date:</label>
+                    <InputDate id="start-date" @bind-Value="experience.StartDate" format="dd/MM/yyyy" class="form-control" />
+                    <ValidationMessage For="() => experience.StartDate"/>
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date:</label>
+                    <InputDate id="end-date" @bind-Value="experience.EndDate" class="form-control" />
+                    <ValidationMessage For="() => experience.EndDate"/>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code{
+    [Parameter]
+    public int? Id {get; set;}
+
+    [SupplyParameterFromForm]
+    private Experience? experience {get; set;}
+
+    public int personId{get; set;}
+
+    private Person[]? people;
+
+    private string title = string.Empty;
+
+    private string errorMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        //people = await PeopleClient.GetPeopleAsync();
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        
+        if (query.TryGetValue("personId", out var personIdValue) && int.TryParse(personIdValue, out var parsedPersonId))
+        {
+            personId = parsedPersonId;
+        }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if(experience is not null)
+        {
+            return;
+        }
+
+        Person person = await PeopleClient.GetPersonAsync(personId);
+
+        if(Id is not null)
+        {
+            experience = await ExperienceClient.GetExperienceAsync(Id.Value);
+            title = $"Edit {person.Name} {person.LastName}'s experience:";
+        }
+        else
+        {
+            experience = new()
+            {
+                CompanyName = string.Empty,
+                Position = string.Empty,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+                PersonId = personId,
+            };
+
+            title = $"Add experience for {person.Name} {person.LastName}:";
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        ArgumentNullException.ThrowIfNull(experience);
+
+        if(experience.StartDate < experience.EndDate)
+        {
+            string query = $"?StartDate={experience.StartDate}&EndDate={experience.EndDate}";
+
+            // ADDING
+            if(Id is null)
+            {
+                if(await ExperienceClient.IsTimeIntervalFreeAsync(personId, query))
+                {
+                    await ExperienceClient.AddExperienceAsync(experience, personId);
+                    NavigationManager.NavigateTo($"edit-person/{experience.PersonId}");
+                }
+            }
+            // UPDATING
+            else
+            {
+                experience.Id = Id.Value;
+                query += $"&excludeId={experience.Id}";
+                if(await ExperienceClient.IsTimeIntervalFreeAsync(personId, query))
+                {
+                    await ExperienceClient.UpdateExperienceAsync(experience);
+                    NavigationManager.NavigateTo($"edit-person/{experience.PersonId}");
+                }                    
+            }
+            errorMessage = "Date interval overlaps with existing experience";
+        } 
+        else
+        {
+            errorMessage = "Start Date cannot be after End Date";
+        }
+    }
+}

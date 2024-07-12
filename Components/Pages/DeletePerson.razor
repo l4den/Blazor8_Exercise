@@ -1,0 +1,59 @@
+﻿@inject PeopleClient Client
+@inject ExperiencesClient ExperiencesClient
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="modal fade" id="@GetModalId(Person)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@title</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" 
+                class="btn btn-secondary" 
+                data-bs-dismiss="modal">Cancel</button>
+        @if(!hasExperiences){
+          <button type="button" 
+                  class="btn btn-danger" 
+                  data-bs-dismiss="modal"
+                  @onclick="@ConfirmAsync">Delete</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public Person? Person {get; set;}
+
+    private string title = string.Empty;
+
+    bool hasExperiences;
+
+    protected override void OnParametersSet()
+    {
+      hasExperiences = Person!.Experiences.Any();
+      if(hasExperiences)
+      {
+        title = $"{Person?.Name} {Person?.LastName} has experiences and cannot be deleted";
+      }
+      else
+      {
+        title = $"Delete {Person?.Name} {Person?.LastName}?";
+      }
+    }
+
+    public static string GetModalId(Person? person)
+    {
+        ArgumentNullException.ThrowIfNull(person);
+        return $"delete/{person.Id}";
+    }
+
+    private async Task ConfirmAsync()
+    {
+      await Client.DeletePersonAsync(Person!.Id);
+      NavigationManager.Refresh();
+    }
+}
