@@ -23,21 +23,25 @@ namespace CRUD.frontend.Clients
 
             return (people, totalRows);
         }
-        public async Task AddPersonAsync(Person person)
+        public async Task<HttpResponseMessage> AddPersonAsync(Person person)
         {
             Random random = new Random();
             person.Id = random.Next(1, 100000);
             HttpResponseMessage response = await httpClient.PostAsJsonAsync("api/person", person);
 
-            response.EnsureSuccessStatusCode();
+            return response;
         }
 
         public async Task<Person> GetPersonAsync(int id) 
             => await httpClient.GetFromJsonAsync<Person>($"api/person/{id}")
             ?? throw new Exception("Could not find person");
         
-        public async Task UpdatePersonAsync(Person updatedPerson)
-            => await httpClient.PutAsJsonAsync($"api/person/{updatedPerson.Id}", updatedPerson);
+        public async Task<HttpResponseMessage> UpdatePersonAsync(Person updatedPerson)
+        {
+            HttpResponseMessage response = await httpClient.PutAsJsonAsync($"api/person/{updatedPerson.Id}", updatedPerson);
+            return response;
+        }
+    
 
         public async Task DeletePersonAsync(int id)
             => await httpClient.DeleteAsync($"api/person/{id}");

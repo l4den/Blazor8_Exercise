@@ -8,10 +8,77 @@
     ".NETCoreApp,Version=v8.0": {
       "CRUD.frontend/1.0.0": {
         "dependencies": {
+          "Blazorise.Bootstrap": "1.5.3",
+          "Blazorise.DataGrid": "1.5.3",
+          "Blazorise.Icons.FontAwesome": "1.5.3",
           "Microsoft.AspNetCore.Components.QuickGrid": "8.0.7"
         },
         "runtime": {
           "CRUD.frontend.dll": {}
+        }
+      },
+      "Blazorise/1.5.3": {
+        "dependencies": {
+          "Blazorise.Licensing": "1.2.0",
+          "Microsoft.AspNetCore.Components": "8.0.7",
+          "Microsoft.AspNetCore.Components.Web": "8.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/Blazorise.dll": {
+            "assemblyVersion": "1.5.3.0",
+            "fileVersion": "1.5.3.0"
+          }
+        }
+      },
+      "Blazorise.Bootstrap/1.5.3": {
+        "dependencies": {
+          "Blazorise": "1.5.3",
+          "Microsoft.AspNetCore.Components": "8.0.7",
+          "Microsoft.AspNetCore.Components.Web": "8.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/Blazorise.Bootstrap.dll": {
+            "assemblyVersion": "1.5.3.0",
+            "fileVersion": "1.5.3.0"
+          }
+        }
+      },
+      "Blazorise.DataGrid/1.5.3": {
+        "dependencies": {
+          "Blazorise": "1.5.3",
+          "Microsoft.AspNetCore.Components": "8.0.7",
+          "Microsoft.AspNetCore.Components.Web": "8.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/Blazorise.DataGrid.dll": {
+            "assemblyVersion": "1.5.3.0",
+            "fileVersion": "1.5.3.0"
+          }
+        }
+      },
+      "Blazorise.Icons.FontAwesome/1.5.3": {
+        "dependencies": {
+          "Blazorise": "1.5.3",
+          "Microsoft.AspNetCore.Components": "8.0.7",
+          "Microsoft.AspNetCore.Components.Web": "8.0.7",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/Blazorise.Icons.FontAwesome.dll": {
+            "assemblyVersion": "1.5.3.0",
+            "fileVersion": "1.5.3.0"
+          }
+        }
+      },
+      "Blazorise.Licensing/1.2.0": {
+        "runtime": {
+          "lib/net8.0/Blazorise.Licensing.dll": {
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
+          }
         }
       },
       "Microsoft.AspNetCore.Authorization/8.0.7": {
@@ -139,6 +206,41 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "Blazorise/1.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8HD32080swXuRmYXAKgWk4Ow3afQOVkTDT2zRX7m2GXKAND3CEtGy1DfwYbFAeb+tIxmtd9dg3gsAehlMP6y9w==",
+      "path": "blazorise/1.5.3",
+      "hashPath": "blazorise.1.5.3.nupkg.sha512"
+    },
+    "Blazorise.Bootstrap/1.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-he527gd+WvVTEpYHCbvyjRSpL02+ntN8Z5e0pWzSzrZtwZsv2v312BNTKlGFjggPhNQ71CtRmDrB9GrO7RohJw==",
+      "path": "blazorise.bootstrap/1.5.3",
+      "hashPath": "blazorise.bootstrap.1.5.3.nupkg.sha512"
+    },
+    "Blazorise.DataGrid/1.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Kq4/+5v8luKYwXzYHsB2q9ccKP9fMykrKU2rTL+OVSo98cm8cuiFZl8xXuAMfOATD+wanl42Hd2F8UXFQUH9hA==",
+      "path": "blazorise.datagrid/1.5.3",
+      "hashPath": "blazorise.datagrid.1.5.3.nupkg.sha512"
+    },
+    "Blazorise.Icons.FontAwesome/1.5.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-O768Wu5lHzqI4uV4z4CnSNPnPlzV+3ACwgOJLqKzkrFT7ncfahgJJxUmlK5QSCYJHb4bj+8EykgJNLnkHFa1jw==",
+      "path": "blazorise.icons.fontawesome/1.5.3",
+      "hashPath": "blazorise.icons.fontawesome.1.5.3.nupkg.sha512"
+    },
+    "Blazorise.Licensing/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-h7jkAF+yyIKnUqFYivaxIySDma1zLV+0xcg52r2gIe772BLQWnBaANjpMBKXxRlYiEyOGPQWjMHJWs3dL/TgmA==",
+      "path": "blazorise.licensing/1.2.0",
+      "hashPath": "blazorise.licensing.1.2.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authorization/8.0.7": {
       "type": "package",

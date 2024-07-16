@@ -38,3 +38,9 @@ C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\obj\Debug\net8.0\refint
 C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\obj\Debug\net8.0\CRUD.frontend.pdb
 C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\obj\Debug\net8.0\CRUD.frontend.genruntimeconfig.cache
 C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\obj\Debug\net8.0\ref\CRUD.frontend.dll
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\obj\Debug\net8.0\CRUD.frontend.sourcelink.json
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\bin\Debug\net8.0\Blazorise.dll
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\bin\Debug\net8.0\Blazorise.DataGrid.dll
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\bin\Debug\net8.0\Blazorise.Licensing.dll
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\bin\Debug\net8.0\Blazorise.Bootstrap.dll
+C:\Users\stefan\Documents\Blazor_Exercises\CRUD.frontend\bin\Debug\net8.0\Blazorise.Icons.FontAwesome.dll

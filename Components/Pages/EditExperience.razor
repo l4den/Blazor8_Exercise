@@ -59,16 +59,12 @@ else
     private Experience? experience {get; set;}
 
     public int personId{get; set;}
-
-    private Person[]? people;
-
     private string title = string.Empty;
-
     private string errorMessage = string.Empty;
 
     protected override void OnInitialized()
     {
-        //people = await PeopleClient.GetPeopleAsync();
+        
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         
@@ -113,28 +109,32 @@ else
         if(experience.StartDate < experience.EndDate)
         {
             string query = $"?StartDate={experience.StartDate}&EndDate={experience.EndDate}";
-
+            HttpResponseMessage response;
             // ADDING
             if(Id is null)
             {
-                if(await ExperienceClient.IsTimeIntervalFreeAsync(personId, query))
-                {
-                    await ExperienceClient.AddExperienceAsync(experience, personId);
-                    NavigationManager.NavigateTo($"edit-person/{experience.PersonId}");
-                }
+                response = await ExperienceClient.AddExperienceAsync(experience, personId);
             }
             // UPDATING
             else
             {
                 experience.Id = Id.Value;
                 query += $"&excludeId={experience.Id}";
-                if(await ExperienceClient.IsTimeIntervalFreeAsync(personId, query))
-                {
-                    await ExperienceClient.UpdateExperienceAsync(experience);
-                    NavigationManager.NavigateTo($"edit-person/{experience.PersonId}");
-                }                    
+                
+                response = await ExperienceClient.UpdateExperienceAsync(experience);
+                                    
             }
-            errorMessage = "Date interval overlaps with existing experience";
+
+            // IS ADDED/UPDATED
+            if(response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo($"edit-person/{experience.PersonId}");
+            }
+            // TIME INTERVAL IS NOT FREE
+            else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                errorMessage = "Date interval overlaps with existing experience";
+            }
         } 
         else
         {

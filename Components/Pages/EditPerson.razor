@@ -140,27 +140,26 @@ else
     private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(person);
+        
+        HttpResponseMessage response;
 
-        bool embgExists = await Client.EmbgExistsAsync(person.Embg);
-
-        if(!embgExists)
+        if(Id is null)
         {
-            embgError = "";
-            if(Id is null)
-            {
-                await Client.AddPersonAsync(person);
-            }
-            else
-            {
-                person.Id = Id.Value;
-                await Client.UpdatePersonAsync(person);
-            }
-            NavigationManager.NavigateTo("/");
+            response = await Client.AddPersonAsync(person);
+        }
+        else
+        {
+            person.Id = Id.Value;
+            response = await Client.UpdatePersonAsync(person);
+        }
+
+        if(response.IsSuccessStatusCode){
+            NavigationManager.NavigateTo("/data-grid");
         }
         else
         {
             embgError = $"An entry for '{person.Embg}' already exists within this table";
-        }
+        }    
     }
 
     private static string ExperienceUrl(int id, int personId) => $"/edit-experience/{id}?personId={personId}";
@@ -169,5 +168,4 @@ else
     {
         return $"#{DeleteExperience.GetModalId(experience)}";
     }
-
 }

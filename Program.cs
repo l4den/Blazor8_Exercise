@@ -1,6 +1,10 @@
 using CRUD.frontend.Clients;
 using CRUD.frontend.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,15 @@ var ExerciseURl = builder.Configuration["ExerciseUrl"] ??
 
 builder.Services.AddHttpClient<PeopleClient>(client => client.BaseAddress = new Uri(ExerciseURl));
 builder.Services.AddHttpClient<ExperiencesClient>(client => client.BaseAddress = new Uri(ExerciseURl));
+
+builder.Services
+    .AddBlazorise( options =>
+    {
+        options.Immediate = true;
+    } )
+    .AddBootstrapProviders()
+    .AddFontAwesomeIcons();
+
 
 var app = builder.Build();
 

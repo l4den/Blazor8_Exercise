@@ -1,0 +1,285 @@
+@page "/data-grid"
+@inject PeopleClient Client
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using System.Collections.Generic
+@using Blazorise
+@using Blazorise.DataGrid
+@inject Blazorise.Modules.IJSUtilitiesModule JSUtilities
+
+<PageTitle>People Catalog</PageTitle>
+
+<div class="mt-3 mb-3">
+    <a class="btn btn-primary" role="button" href="/edit-person">Add Person</a>
+</div>
+
+@if(people is null)
+{
+    <p><em>Loading...</em></p>
+    <span>Total rows = @totalRows</span>
+    <span>@query</span>
+}
+else
+{
+    <DataGrid 
+        TItem="Person" 
+        Data="@people" 
+        Sortable="true" 
+        Filterable="true" 
+        Editable="true" 
+        ShowPager="true" 
+        PageSize="4"
+        UseInternalEditing="true"
+        NewItemCreator="@(() => null)"
+        EditMode="DataGridEditMode.Inline"
+        RowInserting="@OnRowInserted"
+        RowUpdated="@OnRowUpdated"
+        RowRemoved="@OnRowRemoved"
+        Striped="true"
+        Bordered="true"
+        Hoverable="true"
+        Responsive="true"
+        SortMode="DataGridSortMode.Single"
+        SortChanged="ChangeSorting"
+        Resizable="true"
+        ResizeMode="TableResizeMode.Columns"
+        
+        >
+        <DataGridColumns>
+            <DataGridColumn TItem="Person" Field="@nameof(Person.Embg)" Caption="Embg" Editable="true"></DataGridColumn>
+            <DataGridColumn TItem="Person" Field="@nameof(Person.Name)" Caption="Name" Editable="true"></DataGridColumn>
+            <DataGridColumn TItem="Person" Field="@nameof(Person.LastName)" Caption="Surname" Editable="true"></DataGridColumn>
+            <DataGridColumn TItem="Person" Field="@nameof(Person.Address)" Caption="Address" Editable="true"></DataGridColumn>
+            <DataGridCommandColumn TItem="Person" Caption="Actions">
+                <NewCommandTemplate>
+
+                </NewCommandTemplate>
+                <EditCommandTemplate>
+                    <Button Color="Color.Primary" Clicked="@(() => PersonUrl(context.Item))"><i class="bi bi-pencil"></i></Button>
+                </EditCommandTemplate>
+                <DeleteCommandTemplate>
+                    <Button Color="Color.Danger" Clicked="@context.Clicked"><i class="bi bi-trash"></i></Button>
+                </DeleteCommandTemplate>
+            </DataGridCommandColumn>
+        </DataGridColumns>
+        
+    </DataGrid>
+    <hr>
+    <span>EMBG column width = @colWidth</span>
+    <h4>Download as:</h4>
+    <div>
+        <button class="btn btn-primary"
+                @onclick="@(async () => await DownloadXlxs())">.XLXS</button>
+
+        <button class="btn btn-primary"
+                @onclick="@(async () => await DownloadPdf())">.PDF</button>
+
+        <button class="btn btn-primary"
+                @onclick="@(async () => await DownloadCsv())">.CSV</button>
+    </div>
+    <script>
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+    </script>
+}
+
+@code{
+
+    string colWidth;
+    private Person[]? people;
+
+    // PAGINATION VARIABLES
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalRows = 0;
+
+    // SEARCH
+    private string? searchWord;
+
+    // SORTING VARIABLES
+    private string? sortBy;
+    private bool isDescending = false;
+    
+    // QUERY PARAMS
+    private string query = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ShowPage();
+    }
+
+    protected async Task ShowPage()
+    {
+        query = $"?PageNumber={currentPage}&PageSize={pageSize}&IsDescending={isDescending}";
+
+        if( sortBy != null )
+        {
+            query += $"&SortBy={sortBy}";
+        }
+
+        if ( searchWord != null)
+        {
+            query += $"&SearchWord={searchWord}";
+        }
+
+        (people, totalRows) = await Client.GetPeopleAsync();
+    }
+
+    protected async Task SearchTable()
+    {
+        await ShowPage();
+    }
+
+    protected async Task ShowPage(int pageNum)
+    {
+        currentPage = pageNum;
+        query = $"?PageNumber={currentPage}&PageSize={pageSize}&IsDescending={isDescending}";
+
+        if( sortBy != null )
+        {
+            query += $"&SortBy={sortBy}";
+        }
+
+        if ( searchWord != null)
+        {
+            query += $"&SearchWord={searchWord}";
+        }
+        (people, totalRows) = await Client.GetPeopleAsync();
+    }
+    
+    // EDIT and DELETE URLS
+    private void PersonUrl(Person person)
+    {
+        NavigationManager.NavigateTo($"/edit-person/{person.Id}");
+    }
+    private string GetDeleteModalId(Person person)
+    {
+        return $"#{DeletePerson.GetModalId(person)}";
+    }
+
+    // TABLE SORTING
+    private int clickEmbg = 0;
+    private int clickName = 0;
+    private int clickSurname = 0;
+    private int clickAddress = 0;
+
+    private async Task SortEmbg()
+    {
+        clickEmbg += 1;
+        clickName = 0;
+        clickAddress = 0;
+        clickSurname = 0;
+
+        sortBy = "Embg";
+        isDescending = (clickEmbg % 2 == 0) ? true : false;
+        await ShowPage();
+    }
+
+    private async Task SortName()
+    {
+        clickEmbg = 0;
+        clickName += 1;
+        clickAddress = 0;
+        clickSurname = 0;
+
+        sortBy = "Name";
+        isDescending = (clickName % 2 == 0) ? true : false;
+        await ShowPage();
+    }
+
+    private async Task SortLastName()
+    {
+        clickEmbg = 0;
+        clickName = 0;
+        clickAddress = 0;
+        clickSurname += 1;
+
+        sortBy = "LastName";
+        isDescending = (clickSurname % 2 == 0) ? true : false;
+        await ShowPage();
+    }
+
+    private async Task SortAddress()
+    {
+        clickEmbg = 0;
+        clickName = 0;
+        clickAddress += 1;
+        clickSurname = 0;
+
+        sortBy = "Address";
+        isDescending = (clickAddress % 2 == 0) ? true : false;
+        await ShowPage();
+    }
+
+    /// EXPORTS
+    private async Task DownloadCsv()
+    {
+        query = $"?SortBy={sortBy}&IsDescending={isDescending}&SearchWord={searchWord}";
+        byte[] fileBytes = await Client.GetCsvFileBytesAsync(query);
+
+        using var memoryStream = new MemoryStream(fileBytes);
+        using var streamRef = new DotNetStreamReference(stream: memoryStream);
+
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "all_people.csv", streamRef);
+    }
+
+    private async Task DownloadPdf()
+    {
+        query = $"?SortBy={sortBy}&IsDescending={isDescending}&SearchWord={searchWord}";
+        byte[] fileBytes = await Client.GetPdfFileBytesAsync(query);
+
+        using var memoryStream = new MemoryStream(fileBytes);
+        using var streamRef = new DotNetStreamReference(stream: memoryStream);
+
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "all_people.pdf", streamRef);
+    }
+
+    private async Task DownloadXlxs()
+    {
+        query = $"?SortBy={sortBy}&IsDescending={isDescending}&SearchWord={searchWord}";
+        byte[] fileBytes = await Client.GetXlxsFileBytesAsync(query);
+
+        using var memoryStream = new MemoryStream(fileBytes);
+        using var streamRef = new DotNetStreamReference(stream: memoryStream);
+
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "all_people.xlxs", streamRef);
+    }
+
+    // DATAGRID
+    public async Task OnRowUpdated(SavedRowItem<Person, Dictionary<string, object>> e)
+    {
+        var person = e.Item;
+        await Client.UpdatePersonAsync(person);
+        await ShowPage();
+    }
+
+    public async Task OnRowRemoved(Person person)
+    {
+        await Client.DeletePersonAsync(person.Id);
+        await ShowPage();
+    }
+
+    public void ChangeSorting(DataGridSortChangedEventArgs eventArgs)
+    {
+        sortBy = eventArgs.FieldName;  // Assuming FieldName or similar property exists
+        isDescending = eventArgs.SortDirection == SortDirection.Descending;
+    }
+    
+    public async Task OnRowInserted(CancellableRowChange<Person, Dictionary<string, object>> args)
+    {
+        args.Cancel = true;
+    }
+}
